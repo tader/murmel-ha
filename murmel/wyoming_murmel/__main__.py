@@ -20,6 +20,8 @@ def validate(options):
         raise ValueError("beam_size moet tussen 1 en 16 liggen")
     if not 0 <= options.get("cpu_threads", 0) <= 64:
         raise ValueError("cpu_threads moet tussen 0 en 64 liggen")
+    if not isinstance(options.get("log_transcripts", False), bool):
+        raise ValueError("log_transcripts moet true of false zijn")
     words = options.get("hotwords", [])
     if not isinstance(words, list) or not all(isinstance(w, str) for w in words):
         raise ValueError("hotwords moet een lijst tekstwaarden zijn")
@@ -60,7 +62,7 @@ async def run(args):
     except Exception:
         LOG.error("Model laden mislukt. Controleer modeltoegang, token, netwerk en vrije opslag.")
         raise SystemExit(1) from None
-    engine = Engine(backend)
+    engine = Engine(backend, log_transcripts=options.get("log_transcripts", False))
     server = AsyncServer.from_uri(args.uri)
     task = asyncio.create_task(server.run(functools.partial(Handler, engine)))
     # Wait until a real describe request succeeds before publishing discovery.

@@ -1,6 +1,6 @@
 """Bounded Wyoming STT server with an injectable inference backend."""
 import asyncio
-import functools
+import logging
 from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
@@ -11,6 +11,8 @@ from wyoming.info import Info, Describe, AsrProgram, AsrModel, Attribution
 from wyoming.server import AsyncEventHandler
 
 from . import __version__
+
+LOG = logging.getLogger(__name__)
 
 MAX_BYTES = 60 * 16000 * 2
 
@@ -27,8 +29,9 @@ def service_info():
 
 
 class Engine:
-    def __init__(self, backend):
+    def __init__(self, backend, *, log_transcripts=False):
         self.backend = backend
+        self.log_transcripts = log_transcripts
         self.active = 0
         self.executor = ThreadPoolExecutor(max_workers=1)
 
@@ -99,6 +102,8 @@ class Handler(AsyncEventHandler):
                 audio = np.frombuffer(bytes(self.buffer), dtype="<i2").astype(np.float32) / 32768.0
                 text = await self.engine.transcribe(audio) if len(audio) else ""
                 await self.write_event(Transcript(text=text).event())
+                if self.engine.log_transcripts:
+                    LOG.info("Transcriptie: %r", text)
                 self.release()
                 return False
             return True

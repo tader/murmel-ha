@@ -1,5 +1,5 @@
 name: Murmel
-version: "0.1.0"
+version: "0.1.1"
 slug: murmel
 description: Lokale Nederlandse spraakherkenning met Murmel v5
 url: https://github.com/tader/murmel-ha
@@ -18,9 +18,11 @@ options:
   beam_size: 4
   cpu_threads: 0
   hotwords: []
+  log_transcripts: false
 schema:
   hf_token: password
   model_revision: str
   beam_size: int(1,16)
   cpu_threads: int(0,64)
   hotwords: [str]
+  log_transcripts: bool

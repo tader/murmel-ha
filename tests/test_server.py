@@ -54,6 +54,27 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(self.audio[0].dtype, np.float32)
         self.assertAlmostEqual(float(self.audio[0][0]), .5)
 
+    async def test_logging_disabled_by_default(self):
+        with self.assertNoLogs("wyoming_murmel.server", level="INFO"):
+            await self.request([AudioStart(16000, 2, 1),
+                AudioChunk(16000, 2, 1, b"\0\0"), AudioStop()])
+
+    async def test_logging_enabled(self):
+        self.engine.log_transcripts = True
+        self.engine.backend = lambda audio: "Doe de lamp aan.\nVolgende regel."
+        with self.assertLogs("wyoming_murmel.server", level="INFO") as logs:
+            event = await self.request([AudioStart(16000, 2, 1),
+                AudioChunk(16000, 2, 1, b"\0\0"), AudioStop()])
+        self.assertEqual(Transcript.from_event(event).text, "Doe de lamp aan.\nVolgende regel.")
+        self.assertEqual(len(logs.output), 1)
+        self.assertIn("Transcriptie: 'Doe de lamp aan.\\nVolgende regel.'", logs.output[0])
+
+    async def test_logging_empty_transcript(self):
+        self.engine.log_transcripts = True
+        with self.assertLogs("wyoming_murmel.server", level="INFO") as logs:
+            await self.request([AudioStart(16000, 2, 1), AudioStop()])
+        self.assertIn("Transcriptie: ''", logs.output[0])
+
     async def test_empty(self):
         event = await self.request([AudioStart(16000, 2, 1), AudioStop()])
         self.assertEqual(Transcript.from_event(event).text, "")
@@ -104,3 +125,7 @@ class ConfigTests(unittest.TestCase):
     def test_invalid_beam(self):
         with self.assertRaises(ValueError):
             validate({"beam_size": 0})
+
+    def test_invalid_logging_option(self):
+        with self.assertRaises(ValueError):
+            validate({"log_transcripts": "false"})

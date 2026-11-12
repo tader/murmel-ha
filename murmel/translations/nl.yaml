@@ -19,6 +19,10 @@
     "hotwords": {
       "name": "Woordenlijst",
       "description": "Namen en termen die correct gespeld moeten worden."
+    },
+    "log_transcripts": {
+      "name": "Transcripties loggen",
+      "description": "Toon elke definitieve transcriptie in het applog. Gesproken tekst kan persoonsgegevens bevatten. Standaard uit; herstart na wijzigen."
     }
   }
 }

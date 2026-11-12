@@ -19,6 +19,10 @@
     "hotwords": {
       "name": "Hotwords",
       "description": "Names and terms to prefer during decoding."
+    },
+    "log_transcripts": {
+      "name": "Log transcripts",
+      "description": "Show every final transcript in the app log. Spoken text may contain personal information. Disabled by default; restart after changing."
     }
   }
 }

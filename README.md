@@ -18,7 +18,7 @@ Meer configuratie en probleemoplossing: [apphandleiding](murmel/DOCS.md).
 
 ## Werking en privacy
 
-Audio gaat van Home Assistant via lokaal TCP naar deze app. Murmel wordt eenmaal geladen; na het einde van de opname volgt één definitief transcript. Home Assistant verzorgt het einde van de spraakopdracht. Audio en transcripties worden niet opgeslagen of gelogd door deze app. Home Assistant zelf kan pipelinegegevens bewaren.
+Audio gaat van Home Assistant via lokaal TCP naar deze app. Murmel wordt eenmaal geladen; na het einde van de opname volgt één definitief transcript. Home Assistant verzorgt het einde van de spraakopdracht. Audio wordt niet opgeslagen. Transcripties worden standaard niet gelogd. Met de optie **Transcripties loggen** (`log_transcripts: true`) verschijnt elk definitief resultaat in het applog; herstart de app na wijzigen. Gesproken tekst kan persoonsgegevens bevatten en blijft dan volgens de logbewaring van Home Assistant beschikbaar. Home Assistant zelf kan pipelinegegevens bewaren.
 
 Alleen de eerste modeldownload vereist Hugging Face. Daarna wordt het gecachete model rechtstreeks lokaal geladen, ook zonder netwerk. Tokens staan in de private appconfiguratie; behandel Home Assistant-backups als gevoelige gegevens. Modelgewichten worden niet in het containerimage meegeleverd.
 
