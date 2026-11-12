@@ -1,4 +1,6 @@
 FROM python:3.13-slim-bookworm
+LABEL org.opencontainers.image.source="https://github.com/tader/murmel-ha"
+LABEL org.opencontainers.image.licenses="MIT"
 ENV PYTHONUNBUFFERED=1 HF_HUB_DISABLE_TELEMETRY=1 HF_HUB_DISABLE_PROGRESS_BARS=1
 RUN apt-get update && apt-get install -y --no-install-recommends libsndfile1 libgomp1 && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
