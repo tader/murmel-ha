@@ -1,0 +1,24 @@
+{
+  "configuration": {
+    "hf_token": {
+      "name": "Hugging Face token",
+      "description": "Read token for the approved model."
+    },
+    "model_revision": {
+      "name": "Model revision",
+      "description": "main or a full commit SHA; the first download is pinned locally."
+    },
+    "beam_size": {
+      "name": "Beam size",
+      "description": "Default 4; lower is faster."
+    },
+    "cpu_threads": {
+      "name": "CPU threads",
+      "description": "0 automatically chooses up to four threads."
+    },
+    "hotwords": {
+      "name": "Hotwords",
+      "description": "Names and terms to prefer during decoding."
+    }
+  }
+}

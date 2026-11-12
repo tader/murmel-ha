@@ -1,0 +1,56 @@
+name: CI
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install wyoming==1.11.0 numpy==2.2.6 PyYAML==6.0.3
+      - run: PYTHONPATH=murmel python -m unittest discover -s tests -v
+      - run: python scripts/check_metadata.py
+  container:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Image tag
+        id: version
+        run: echo "version=$(python -c 'import yaml; print(yaml.safe_load(open("murmel/config.yaml"))["version"])')" >> "$GITHUB_OUTPUT"
+      - name: Validate release tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: test "$GITHUB_REF_NAME" = "v$VERSION"
+      - uses: docker/build-push-action@v6
+        with:
+          context: murmel
+          platforms: linux/amd64
+          load: true
+          tags: ghcr.io/tader/murmel-ha:${{ steps.version.outputs.version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Check runtime imports
+        run: docker run --rm --entrypoint python ghcr.io/tader/murmel-ha:${{ steps.version.outputs.version }} -c "from murmel_flash import Transcriber; from wyoming_murmel.server import service_info; assert service_info().asr[0].models[0].languages == ['nl']"
+      - name: Publish tested image
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: docker push ghcr.io/tader/murmel-ha:${{ steps.version.outputs.version }}

@@ -1,0 +1,24 @@
+{
+  "configuration": {
+    "hf_token": {
+      "name": "Hugging Face-token",
+      "description": "Token met leestoegang tot het goedgekeurde model."
+    },
+    "model_revision": {
+      "name": "Modelrevisie",
+      "description": "main of een volledige commit-SHA; de eerste download wordt lokaal vastgezet."
+    },
+    "beam_size": {
+      "name": "Zoekbreedte",
+      "description": "Standaard 4; lager is sneller."
+    },
+    "cpu_threads": {
+      "name": "CPU-threads",
+      "description": "0 kiest automatisch maximaal vier threads."
+    },
+    "hotwords": {
+      "name": "Woordenlijst",
+      "description": "Namen en termen die correct gespeld moeten worden."
+    }
+  }
+}

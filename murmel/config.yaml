@@ -1,0 +1,26 @@
+name: Murmel
+version: "0.1.0"
+slug: murmel
+description: Lokale Nederlandse spraakherkenning met Murmel v5
+url: https://github.com/tader/murmel-ha
+arch: [amd64]
+startup: services
+boot: auto
+init: true
+discovery: [wyoming]
+image: ghcr.io/tader/murmel-ha
+ports:
+  10300/tcp: null
+backup_exclude: ["models/*"]
+options:
+  hf_token: ""
+  model_revision: main
+  beam_size: 4
+  cpu_threads: 0
+  hotwords: []
+schema:
+  hf_token: password
+  model_revision: str
+  beam_size: int(1,16)
+  cpu_threads: int(0,64)
+  hotwords: [str]
